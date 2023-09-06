@@ -10,10 +10,7 @@ import org.springframework.test.annotation.Rollback;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-
-import static jdk.internal.vm.compiler.word.LocationIdentity.any;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class TodoServiceImplTest {
@@ -26,7 +23,6 @@ class TodoServiceImplTest {
 
     @Test
     @Transactional
-    @Rollback
     void getAll() {
         Todo todo = new Todo();
         todo.setTitle("Buy Milk");
@@ -44,7 +40,24 @@ class TodoServiceImplTest {
         assertNotNull(all);
         assertEquals(todoRepository.count(), all.size());
     }
+
     @Test
+    @Transactional
+    @Rollback
+    void save() {
+        Todo todo = new Todo();
+        todoService.save(todo);
+        Todo byId = todoService.getById(todo.getId());
+
+        assertEquals(byId, todo);
+
+    }
+
+
+
+
+    @Test
+    @Transactional
     @Rollback
     void getById() {
         Todo todo = new Todo();
@@ -56,6 +69,11 @@ class TodoServiceImplTest {
         assertNotNull(finded);
         assertEquals(save.getId(), finded.getId());
         assertEquals(save.getDescription(), finded.getDescription());
+
+        Todo todo1 = new Todo();
+        Todo byId1 = todoService.getById(5555);
+
+        assertNull(byId1);
 
     }
 
